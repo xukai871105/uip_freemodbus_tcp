@@ -17,7 +17,7 @@ typedef unsigned short            uip_stats_t;
 /* CPU字节顺序 */ 
 #define UIP_CONF_BYTE_ORDER       UIP_LITTLE_ENDIAN
 /* 日志开关	 */			
-#define UIP_CONF_LOGGING          1
+#define UIP_CONF_LOGGING          0
 /* UDP支持开关*/
 #define UIP_CONF_UDP              0
 /* UDP校验和开关 */

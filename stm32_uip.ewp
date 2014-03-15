@@ -1928,12 +1928,6 @@
         <name>$PROJ_DIR$\FreeModbus\port\portevent.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\FreeModbus\port\portother.c</name>
-        <excluded>
-          <configuration>Debug</configuration>
-        </excluded>
-      </file>
-      <file>
         <name>$PROJ_DIR$\FreeModbus\port\porttcp.c</name>
       </file>
     </group>

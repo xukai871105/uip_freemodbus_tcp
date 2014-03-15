@@ -30,23 +30,23 @@
 #define REG_HOLDING_NREGS     16                    // 保持寄存器数量
 
 #define REG_COILS_START       0x0000                // 线圈起始地址
-#define REG_COILS_SIZE        24                    // 线圈数量
+#define REG_COILS_SIZE        16                    // 线圈数量
 
 #define REG_DISCRETE_START    0x0000                // 开关寄存器起始地址
 #define REG_DISCRETE_SIZE     16                    // 开关寄存器数量
 
 // 输入寄存器内容
-uint16_t usRegInputBuf[REG_INPUT_NREGS] = {0x1000,0x1001,0x1002,0x1003,0x1004,0x1005,0x1006,0x1007};
+uint16_t usRegInputBuf[REG_INPUT_NREGS] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
 // 寄存器起始地址
 uint16_t usRegInputStart = REG_INPUT_START;
 // 保持寄存器内容
-uint16_t usRegHoldingBuf[REG_HOLDING_NREGS] = {0x147b,0x3f8e,0x147b,0x400e,0x1eb8,0x4055,0x147b,0x408e};
+uint16_t usRegHoldingBuf[REG_HOLDING_NREGS] = {16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
 // 保持寄存器起始地址
 uint16_t usRegHoldingStart = REG_HOLDING_START;
 // 线圈状态
-uint8_t ucRegCoilsBuf[REG_COILS_SIZE / 8] = {0x0F,0x02,0x03};
+uint8_t ucRegCoilsBuf[REG_COILS_SIZE / 8] = {0xAA, 0x55};
 // 开关状态
-uint8_t ucRegDiscreteBuf[REG_DISCRETE_SIZE / 8] = {0x01,0x02};
+uint8_t ucRegDiscreteBuf[REG_DISCRETE_SIZE / 8] = {0xAA,0x55};
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])	
 
@@ -85,7 +85,8 @@ int main(void)
 	uip_ipaddr(ipaddr, 255,255,255,0);		 
 	uip_setnetmask(ipaddr);	
     
-    eMBTCPInit(MB_TCP_PORT_USE_DEFAULT);      // 侦听默认端口 502
+    // MODBUS TCP侦听默认端口 502
+    eMBTCPInit(MB_TCP_PORT_USE_DEFAULT);      
     eMBEnable();	
     
     BSP_ConfigUSART1();
@@ -130,8 +131,6 @@ int main(void)
         {
             timer_reset(&periodic_timer);
             
-            /* 测试使用 */
-            GPIOB->ODR ^= GPIO_Pin_5;
             /* 处理TCP连接, UIP_CONNS缺省是10个 */
             for(uint8_t i = 0; i < UIP_CONNS; i++)
             {
@@ -185,6 +184,7 @@ void GPIO_Config(void)
                             RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD |
                             RCC_APB2Periph_GPIOE, ENABLE);
     
+    // 以下内容请根据开发板修改，请注意SPI总线上的其他设备
     // LED1控制
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;				     
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -195,28 +195,21 @@ void GPIO_Config(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_3;		 
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     
-    //SST25VF016B SPI片选
+    // 其他挂载在SPI1总线上的设备
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;					 
     GPIO_Init(GPIOC, &GPIO_InitStructure);
-    // PB12---VS1003 SPI片选（V2.1) PB7---触摸屏芯片XPT2046 SPI 片选
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_7;		 
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     
     // 禁止SPI1总线上的其他设备 非常重要
     GPIO_SetBits(GPIOB, GPIO_Pin_7);    // 触摸屏芯片XPT2046 SPI 片选禁止  
-    GPIO_SetBits(GPIOB, GPIO_Pin_12);   // VS1003 SPI片选（V2.1)禁止 
+    GPIO_SetBits(GPIOB, GPIO_Pin_12);   // VS1003 SPI片选禁止 
     GPIO_SetBits(GPIOC, GPIO_Pin_4);    // SST25VF016B SPI片选禁止  
     
-    //ENC28J60接收完成中断引脚 
+    // ENC28J60接收完成中断引脚 ，本例未使用
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;	         	 	
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;     //内部上拉输入
     GPIO_Init(GPIOA, &GPIO_InitStructure);		 
-}
-
-
-void uip_log(char *m)
-{
-    
 }
 
 eMBErrorCode
@@ -225,8 +218,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
     
-    //查询是否在寄存器范围内
-    //为了避免警告，修改为有符号整数
+    // 查询是否在寄存器范围内
+    // 为了避免警告，修改为有符号整数
     if( ( (int16_t) usAddress >= REG_INPUT_START ) \
         && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
@@ -241,7 +234,6 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     }
     else
     {
-        //返回错误状态，无寄存器  
         eStatus = MB_ENOREG;
     }
     
@@ -305,20 +297,17 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils,
         usBitOffset = ( unsigned short )( usAddress - REG_COILS_START );
         switch ( eMode )
         {
-
+            
         case MB_REG_READ:
             while( iNCoils > 0 )
             {
                 *pucRegBuffer++ = xMBUtilGetBits( ucRegCoilsBuf, usBitOffset,
-                                                 ( unsigned char )( iNCoils >
-                                                                   8 ? 8 :
-                                                                        iNCoils ) );
+                                                 ( unsigned char )( iNCoils > 8 ? 8 : iNCoils ) );
                 iNCoils -= 8;
                 usBitOffset += 8;
             }
             break;
             
-            /* Update current register values. */
         case MB_REG_WRITE:
             while( iNCoils > 0 )
             {
@@ -342,12 +331,10 @@ eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils,
 eMBErrorCode
 eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
-    //错误状态
     eMBErrorCode    eStatus = MB_ENOERR;
     short           iNDiscrete = ( short )usNDiscrete;
     unsigned short  usBitOffset;
     
-    /* Check if we have registers mapped at this block. */
     if( ( (int16_t)usAddress >= REG_DISCRETE_START ) &&
        ( usAddress + usNDiscrete <= REG_DISCRETE_START + REG_DISCRETE_SIZE ) )
     {
@@ -356,13 +343,10 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
         while( iNDiscrete > 0 )
         {
             *pucRegBuffer++ = xMBUtilGetBits( ucRegDiscreteBuf, usBitOffset,
-                                             ( unsigned char)( iNDiscrete > 
-                                                              8 ? 8 : 
-                                                                   iNDiscrete ) );
+                                             ( unsigned char)( iNDiscrete > 8 ? 8 : iNDiscrete ) );
             iNDiscrete -= 8;
             usBitOffset += 8;
         }
-        
     }
     else
     {
@@ -371,6 +355,7 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     return eStatus;
 }
 
+// 测试LED控制
 void led_poll(void)
 {
     uint8_t led_state = ucRegCoilsBuf[0];

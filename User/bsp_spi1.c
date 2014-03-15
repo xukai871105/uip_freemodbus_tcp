@@ -1,16 +1,3 @@
-/*
-********************************************************************************
-*                                   
-* 模块名称 : SPI1驱动模块    
-* 文件名称 : bsp_spi1.c
-* 版    本 : V0.1
-* 说    明 : 配置SPI1相关参数
-* 修改记录 :
-*   版本号  日期        作者      说明
-*   V0.1    2013-01-01  徐凯      创建该文件
-*
-********************************************************************************
-*/
 /* 引用头文件 *****************************************************************/
 #include "stm32f10x.h"
 #include "bsp_spi1.h"
@@ -32,56 +19,56 @@
 */
 void BSP_ConfigSPI1(void)
 {
-  /* GPIO结构体 */
-  GPIO_InitTypeDef  GPIO_InitStructure; 
-  /* SPI结构体 */
-  SPI_InitTypeDef SPI_InitStructure; 
-   
-  /* 使能APB2上相关时钟 */
-  /* 使能SPI时钟，使能GPIOA时钟 */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 |\
-                         RCC_APB2Periph_GPIOA ,ENABLE );
-  
-  /* SPI1 SCK@GPIOA.5 SPI1 MOSI@GPIOA.7 */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5  |  GPIO_Pin_7; 
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
-  /* 复用推挽输出 */
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
-  
-  /* SPI1 MISO@GPIOA.6 */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6; 
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
-  /* 浮动输入 */
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
-  
-
-  /* 双线双向全双工 */
-  SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; 
+    /* GPIO结构体 */
+    GPIO_InitTypeDef  GPIO_InitStructure; 
+    /* SPI结构体 */
+    SPI_InitTypeDef SPI_InitStructure; 
+    
+    /* 使能APB2上相关时钟 */
+    /* 使能SPI时钟，使能GPIOA时钟 */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 |\
+        RCC_APB2Periph_GPIOA ,ENABLE );
+    
+    /* SPI1 SCK@GPIOA.5 SPI1 MOSI@GPIOA.7 */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5  |  GPIO_Pin_7; 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+    /* 复用推挽输出 */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure); 
+    
+    /* SPI1 MISO@GPIOA.6 */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6; 
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+    /* 浮动输入 */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure); 
+    
+    
+    /* 双线双向全双工 */
+    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; 
 	/* 主机模式 */
-  SPI_InitStructure.SPI_Mode = SPI_Mode_Master; 
-  /* 8位帧结构 */
-  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; 
-  /* 时钟空闲时为低 */
-  SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;        
-  /* 第1个上升沿捕获数据 */
-  SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;      
-  /* MSS 端口软件控制 */
-  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;         
-  /* SPI时钟 72Mhz / 8 = 9M */ 
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8; 
-  /* 数据传输高位在前 */
-  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB; 
-  
-  SPI_InitStructure.SPI_CRCPolynomial = 7;
-  /* 初始化SPI1 */
-  SPI_Init(SPI1, &SPI_InitStructure);
-  
+    SPI_InitStructure.SPI_Mode = SPI_Mode_Master; 
+    /* 8位帧结构 */
+    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; 
+    /* 时钟空闲时为低 */
+    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;        
+    /* 第1个上升沿捕获数据 */
+    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;      
+    /* MSS 端口软件控制 */
+    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;         
+    /* SPI时钟 72Mhz / 8 = 9M */ 
+    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8; 
+    /* 数据传输高位在前 */
+    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB; 
+    
+    SPI_InitStructure.SPI_CRCPolynomial = 7;
+    /* 初始化SPI1 */
+    SPI_Init(SPI1, &SPI_InitStructure);
+    
 	/* 把使能SPI口的SS输出功能 GPIOA.4 */
 	SPI_SSOutputCmd(SPI1,ENABLE);
-  /* 使能SPI1 */
-  SPI_Cmd(SPI1, ENABLE); 
+    /* 使能SPI1 */
+    SPI_Cmd(SPI1, ENABLE); 
 }
 
 /*
@@ -96,16 +83,16 @@ void BSP_ConfigSPI1(void)
 */
 uint8_t BSP_SPI1SendByte(uint8_t byte)
 {
-  /* 等待发送缓冲寄存器为空 */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
-  /* 发送数据 */
-  SPI_I2S_SendData(SPI1, byte);		
-  
-  /* 等待接收缓冲寄存器为非空 */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
-  
-  return SPI_I2S_ReceiveData(SPI1);
-  
+    /* 等待发送缓冲寄存器为空 */
+    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+    /* 发送数据 */
+    SPI_I2S_SendData(SPI1, byte);		
+    
+    /* 等待接收缓冲寄存器为非空 */
+    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+    
+    return SPI_I2S_ReceiveData(SPI1);
+    
 }
 
 /*
@@ -120,13 +107,13 @@ uint8_t BSP_SPI1SendByte(uint8_t byte)
 */
 uint8_t BSP_SPI1ReceiveByte(void)
 {
-  /* 等待发送缓冲寄存器为空 */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
-  /* 发送数据,通过发送0xFF,获得返回数据 */
-  SPI_I2S_SendData(SPI1, 0xFF);		
-  /* 等待接收缓冲寄存器为非空 */
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
-  /* 返回从SPI通信中接收到的数据 */
-  return SPI_I2S_ReceiveData(SPI1);
+    /* 等待发送缓冲寄存器为空 */
+    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+    /* 发送数据,通过发送0xFF,获得返回数据 */
+    SPI_I2S_SendData(SPI1, 0xFF);		
+    /* 等待接收缓冲寄存器为非空 */
+    while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+    /* 返回从SPI通信中接收到的数据 */
+    return SPI_I2S_ReceiveData(SPI1);
 }
 /***************************************************************END OF FILE****/

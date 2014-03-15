@@ -38,6 +38,13 @@
 #define MB_TCP_FUNC         7
 
 /* ----------------------- Defines  -----------------------------------------*/
+#define DEBUG 1
+#if DEBUG
+#define PRINTF(...) printf(__VA_ARGS__)
+#else
+#define PRINTF(...)
+#endif
+
 #define MB_TCP_DEFAULT_PORT  502          /* TCP listening port. */
 #define MB_TCP_BUF_SIZE     ( 256 + 7 )   /* Must hold a complete Modbus TCP frame. */
 
@@ -49,7 +56,6 @@ static UCHAR    ucTCPResponseFrame[MB_TCP_BUF_SIZE];
 static USHORT   ucTCPResponseLen;
 
 BOOL   bFrameSent = FALSE;
-// BOOL   is_frame_send = FALSE;
 
 /* ----------------------- Static variables ---------------------------------*/
 
@@ -61,7 +67,7 @@ BOOL
 xMBTCPPortInit( USHORT usTCPPort )
 {
     BOOL bOkay = FALSE;
-
+    
     USHORT usPort;
     if( usTCPPort == 0 )
     {
@@ -69,18 +75,18 @@ xMBTCPPortInit( USHORT usTCPPort )
     }
     else
     {
-        usPort = ( USHORT ) usTCPPort;
+        usPort = (USHORT)usTCPPort;
     }
-
+    
     // 侦听端口 502端口
-    uip_listen(HTONS( usPort));
+    uip_listen(HTONS(usPort));
     
     bOkay = TRUE;
     return bOkay;
 }
 
 
-void
+void 
 vMBTCPPortClose(  )
 {
     
@@ -118,22 +124,22 @@ void uip_modbus_appcall(void)
 {
     if( uip_connected() )
     {
-        printf("connected!\r\n");
+        PRINTF("connected!\r\n");
     }
     
     if( uip_closed() )
     {
-        printf("closed\r\n");
+        PRINTF("closed\r\n");
     }
     
     if( uip_newdata() )
     {
-        printf("request!\r\n");
+        PRINTF("request!\r\n");
         // 获得modbus请求
-        memcpy( ucTCPRequestFrame , uip_appdata, uip_len );
+        memcpy(ucTCPRequestFrame, uip_appdata, uip_len );
         ucTCPRequestLen = uip_len;
         // 向 modbus poll发送消息
-        ( void )xMBPortEventPost( EV_FRAME_RECEIVED );
+        xMBPortEventPost( EV_FRAME_RECEIVED );
     }
     
     if( uip_poll() )

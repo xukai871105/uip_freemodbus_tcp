@@ -1,18 +1,3 @@
-/*
-********************************************************************************
-*                                   
-* 模块名称 : 通用定时器模块
-* 文件名称 : timer.c
-* 版    本 : V0.1
-* 说    明 : 使用systick时钟作为一个通用时钟，可以实现毫秒级延时
-* 修改记录 :
-*   版本号  日期        作者      说明
-*   V0.1    2012-12-31  徐凯      创建该文件，该函数来自protothread
-*                                 保留代码风格，全部小写
-*
-*
-********************************************************************************
-*/
 
 /* 引用头文件 *****************************************************************/
 #include "timer.h"
@@ -39,11 +24,11 @@ uint16_t current_clock = 0;
 */
 void timer_config(void)
 {
-  /* Systick时钟每s触发一次CLOCK_SECOND次 */
-  if (SysTick_Config(SystemCoreClock / CLOCK_SECOND))
-  { 
-    while (1);
-  }
+    /* Systick时钟每s触发一次CLOCK_SECOND次 */
+    if (SysTick_Config(SystemCoreClock / CLOCK_SECOND))
+    { 
+        while (1);
+    }
 }
 
 /*
@@ -58,8 +43,8 @@ void timer_config(void)
 */
 void SysTick_Handler(void)
 {
-  /* 时间标志累加 */
-  current_clock++;
+    /* 时间标志累加 */
+    current_clock++;
 }
 
 /*
@@ -74,7 +59,7 @@ void SysTick_Handler(void)
 */
 uint16_t clock_time(void)
 {
-  return current_clock;
+    return current_clock;
 }
 
 /*
@@ -90,10 +75,10 @@ uint16_t clock_time(void)
 */
 void timer_set(timer_typedef* ptimer,uint16_t interval)
 {
-  /* 设置时间间隔 */
-  ptimer->interval = interval;
-  /* 设置启动时间 */
-  ptimer->start = clock_time();
+    /* 设置时间间隔 */
+    ptimer->interval = interval;
+    /* 设置启动时间 */
+    ptimer->start = clock_time();
 }
 
 /*
@@ -108,7 +93,7 @@ void timer_set(timer_typedef* ptimer,uint16_t interval)
 */
 void timer_reset(timer_typedef * ptimer)
 { 
-  ptimer->start =ptimer->start + ptimer->interval;
+    ptimer->start =ptimer->start + ptimer->interval;
 }
 
 /*
@@ -123,11 +108,11 @@ void timer_reset(timer_typedef * ptimer)
 */
 int8_t timer_expired(timer_typedef* ptimer)
 {
-  /* 一定要装换为有符号数，进行数学比较时，多使用有符号数 */
-  if((int16_t)(clock_time() - ptimer->start) >= (int16_t)ptimer->interval)
-    return 1;
-  else
-    return 0;
+    /* 一定要装换为有符号数，进行数学比较时，多使用有符号数 */
+    if((int16_t)(clock_time() - ptimer->start) >= (int16_t)ptimer->interval)
+        return 1;
+    else
+        return 0;
 }
 
 /***************************************************************END OF FILE****/

@@ -28,11 +28,6 @@ static eMBEventType   eQueuedEvent;
 static BOOL           xEventInQueue;
 
 /* ----------------------- Start implementation -----------------------------*/
-/**
-  * @brief  事件初始化
-  * @param  None
-  * @retval None
-  */
 BOOL
 xMBPortEventInit( void )
 {
@@ -40,11 +35,6 @@ xMBPortEventInit( void )
     return TRUE;
 }
 
-/**
-  * @brief  事件发送
-  * @param  None
-  * @retval None
-  */
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
@@ -55,11 +45,6 @@ xMBPortEventPost( eMBEventType eEvent )
   return TRUE;
 }
 
-/**
-  * @brief  事件接收
-  * @param  None
-  * @retval None
-  */
 BOOL
 xMBPortEventGet( eMBEventType * eEvent )
 {
@@ -69,7 +54,7 @@ xMBPortEventGet( eMBEventType * eEvent )
   // 若有事件更新
   if( xEventInQueue )
   {
-    //获得事件
+    // 获得事件
     *eEvent = eQueuedEvent;
     xEventInQueue = FALSE;
     xEventHappened = TRUE;
