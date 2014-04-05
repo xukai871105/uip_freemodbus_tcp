@@ -44,9 +44,9 @@ uint16_t usRegHoldingBuf[REG_HOLDING_NREGS] = {16,15,14,13,12,11,10,9,8,7,6,5,4,
 // 保持寄存器起始地址
 uint16_t usRegHoldingStart = REG_HOLDING_START;
 // 线圈状态
-uint8_t ucRegCoilsBuf[REG_COILS_SIZE / 8] = {0xAA, 0x55};
+uint8_t ucRegCoilsBuf[REG_COILS_SIZE / 8] = {0xFF, 0x00};
 // 开关状态
-uint8_t ucRegDiscreteBuf[REG_DISCRETE_SIZE / 8] = {0xAA,0x55};
+uint8_t ucRegDiscreteBuf[REG_DISCRETE_SIZE / 8] = {0x00,0xFF};
 
 #define BUF ((struct uip_eth_hdr *)&uip_buf[0])	
 
@@ -131,6 +131,8 @@ int main(void)
         {
             timer_reset(&periodic_timer);
             
+            // GPIOD->ODR ^= GPIO_Pin_3;
+            
             /* 处理TCP连接, UIP_CONNS缺省是10个 */
             for(uint8_t i = 0; i < UIP_CONNS; i++)
             {
@@ -192,13 +194,13 @@ void GPIO_Config(void)
     GPIO_Init(GPIOB, &GPIO_InitStructure);					 
     
     // LED2, LED3控制
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_3;		 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_3;		 
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     
     // 其他挂载在SPI1总线上的设备
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;					 
     GPIO_Init(GPIOC, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_7;		 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_7;		 
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     
     // 禁止SPI1总线上的其他设备 非常重要
@@ -206,9 +208,9 @@ void GPIO_Config(void)
     GPIO_SetBits(GPIOB, GPIO_Pin_12);   // VS1003 SPI片选禁止 
     GPIO_SetBits(GPIOC, GPIO_Pin_4);    // SST25VF016B SPI片选禁止  
     
-    // ENC28J60接收完成中断引脚 ，本例未使用
+    // ENC28J60接收完成中断引脚，本例未使用
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;	         	 	
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;     //内部上拉输入
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(GPIOA, &GPIO_InitStructure);		 
 }
 
@@ -358,11 +360,11 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 // 测试LED控制
 void led_poll(void)
 {
-    uint8_t led_state = ucRegCoilsBuf[0];
+//    uint8_t led_state = ucRegCoilsBuf[0];
     
-    led_state & 0x01 ? LED1_ON():LED1_OFF();
-    led_state & 0x02 ? LED2_ON():LED2_OFF();
-    led_state & 0x04 ? LED3_ON():LED3_OFF();
+//    led_state & 0x01 ? LED1_ON():LED1_OFF();
+//    led_state & 0x02 ? LED2_ON():LED2_OFF();
+//    led_state & 0x04 ? LED3_ON():LED3_OFF();
 }
 
 

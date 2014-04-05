@@ -122,17 +122,17 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 
 void uip_modbus_appcall(void)
 {
-    if( uip_connected() )
+    if(uip_connected())
     {
         PRINTF("connected!\r\n");
     }
     
-    if( uip_closed() )
+    if(uip_closed())
     {
         PRINTF("closed\r\n");
     }
     
-    if( uip_newdata() )
+    if(uip_newdata())
     {
         PRINTF("request!\r\n");
         // 获得modbus请求
@@ -142,9 +142,9 @@ void uip_modbus_appcall(void)
         xMBPortEventPost( EV_FRAME_RECEIVED );
     }
     
-    if( uip_poll() )
+    if(uip_poll())
     {
-        if( bFrameSent )
+        if(bFrameSent)
         {
             bFrameSent = FALSE;
             // uIP发送Modbus应答数据包
