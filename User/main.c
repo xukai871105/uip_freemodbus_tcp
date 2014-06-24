@@ -58,8 +58,8 @@ int main(void)
     timer_typedef periodic_timer, arp_timer;
     uip_ipaddr_t ipaddr;
     
-    /* 设定查询定时器 ARP定时器 */
-    timer_set(&periodic_timer, CLOCK_SECOND / 2);
+    /* TCP定时器修改为100ms */
+    timer_set(&periodic_timer, CLOCK_SECOND / 10);
     timer_set(&arp_timer, CLOCK_SECOND * 10);
     
     /* IO口初始化 主要是为了避免SPI总线上的其他设备 */
