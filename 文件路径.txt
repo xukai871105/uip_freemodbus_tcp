@@ -1,11 +1,11 @@
-Í·ÎÄ¼şÂ·¾¶
+å¤´æ–‡ä»¶è·¯å¾„
 $PROJ_DIR$\CMSIS
 $PROJ_DIR$\StdPeriph_Driver\inc
 $PROJ_DIR$\User
 
-ºê¶¨Òå
+å®å®šä¹‰
 USE_STDPERIPH_DRIVER
 STM32F10X_MD
 
-LinkÎÄ¼şÂ·¾¶
+Linkæ–‡ä»¶è·¯å¾„
 $PROJ_DIR$\Linker\stm32f10x_flash
